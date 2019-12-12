@@ -29,6 +29,7 @@ $(document).ready(function ()
     
     function gameStart()
     {
+        console.clear();
         board.html(""); // Clear the board
         
         // To make scalable, set wrapper #game width and height 82px * boardSize
@@ -53,7 +54,7 @@ $(document).ready(function ()
         board.on("click", "li", function ()
         {
             // determineWinner will return true if it finds a winning combination
-            if (determineWinner())
+            if (determineWinner(true))
             {
                 turnIndicator.css("color","blue").text(winningPlayer[0].toUpperCase() + ' wins!'); // Show who is the winner in the turnIndicator
                 
@@ -107,9 +108,10 @@ $(document).ready(function ()
         var winningPlayer;
         
         // Add function to determine winner based on clicks array
-        var determineWinner = function ()
+        function determineWinner(printConsole = true)
         {
             // Check for win by row
+            var rowNum = 1;
             for (i = 0; i < numSquares; i += 1)
             {
                 if ((i % boardSize) === 0)
@@ -120,8 +122,11 @@ $(document).ready(function ()
                         rowCheck.push(squares.eq(squareNum).data("ttt"));
                     }
                     
-                    console.log('Row ' + i + ' is ' + rowCheck);
-                    console.log(allSame(rowCheck));
+                    if(printConsole)
+                    {
+                        console.log('Row ' + rowNum++, rowCheck);
+                        console.log(allSame(rowCheck));
+                    }
 
                     if (allSame(rowCheck))
                     {
@@ -132,6 +137,7 @@ $(document).ready(function ()
             }
             
             // Check for win by column
+            var colNum = 1;
             for (i = 0; i < numSquares; i += 1)
             {
                 if (i < boardSize)
@@ -141,8 +147,12 @@ $(document).ready(function ()
                     {
                         colCheck.push(squares.eq(squareNum).data("ttt"));
                     }
-                    console.log('Column ' + i + 'is ' + colCheck);
-                    console.log(allSame(colCheck));
+                    
+                    if(printConsole)
+                    {
+                        console.log('Column ' + colNum++, colCheck);
+                        console.log(allSame(colCheck));
+                    }
 
                     if (allSame(colCheck))
                     {
@@ -159,13 +169,17 @@ $(document).ready(function ()
                 // use condition if iterator % boardSize + 1 === 0 to get left diagonals
                 if ((i % (boardSize + 1)) === 0)
                 {
-                    console.log(i);
+//                    console.log(i);
                     diag1Check.push(squares.eq(i).data("ttt"));
                 }
             }
             
-            console.log(diag1Check);
-            console.log(allSame(diag1Check));
+            if(printConsole)
+            {
+                console.log('Left diagonal', diag1Check);
+                console.log(allSame(diag1Check));
+            }
+            
             if (allSame(diag1Check))
             {
                 winningPlayer = diag1Check;
@@ -178,13 +192,17 @@ $(document).ready(function ()
             {
                 if ((i % (boardSize - 1)) === 0)
                 {
-                    console.log(i);
+//                    console.log(i);
                     diag2Check.push(squares.eq(i).data("ttt"));
                 }
             }
             
-            console.log(diag2Check);
-            console.log(allSame(diag2Check));
+            if(printConsole)
+            {
+                console.log('Right diagonal', diag2Check);
+                console.log(allSame(diag2Check));
+            }
+            
             if (allSame(diag2Check))
             {
                 winningPlayer = diag2Check;
@@ -193,7 +211,7 @@ $(document).ready(function ()
         }; // End determineWinner function
         
         // Add function to count square clicks
-        var countClicks = function ()
+        function countClicks()
         {
             var divID = $(this).attr("id");
             squareClicks[divID] += 1;
@@ -205,13 +223,15 @@ $(document).ready(function ()
             {
                 $(this).addClass('disable x btn-info').data("ttt", "x").text( "x");
             }
-            else if (!determineWinner())
+            else if (!determineWinner(false))
             {
                 alert('Already selected');
                 boardClicks -= 1;
             }
             
-            if (determineWinner())
+            console.log('Turn', squareClicks.reduce(sum));
+            
+            if (determineWinner(false))
             {
                 for (var i = 0; i < numSquares; i++)
                 {
@@ -265,5 +285,9 @@ $(document).ready(function ()
                 return element === first;
             });
         }
+    }
+    
+    function sum(total, num) {
+        return total + num;
     }
 });
