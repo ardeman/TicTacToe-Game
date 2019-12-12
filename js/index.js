@@ -231,8 +231,10 @@ $(document).ready(function ()
 
             console.log('Turn', squareClicks.reduce(sum));
 
+            // Check for winner, if true, lock all local clicks
             if (determineWinner(false))
             {
+                // Set all square clicks to 2 to "lock" them to prevent further moves from taking place
                 for (var i = 0; i < numSquares; i++)
                 {
                     squareClicks[i] = 2;
